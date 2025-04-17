@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import ToDosList from './components/ToDosList/ToDosList';
+import { ToDoFull } from './types/toDo';
 
 function App() {
   const initialState = [
@@ -11,7 +12,7 @@ function App() {
 
   type ToDoType = (typeof initialState)[0];
 
-  const [toDos, setToDos] = useState<ToDoType[]>();
+  const [toDos, setToDos] = useState<ToDoFull[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   const delay = (ms: number): Promise<ToDoType[]> => {
@@ -27,7 +28,8 @@ function App() {
     try {
       const data = await delay(1000);
       console.log(typeof data);
-      setToDos(data);
+      const newData = data.map(el => ({ ...el, isDeleted: false }));
+      setToDos(newData);
     } catch (error) {
       console.error(`Ошибка: ${error}`);
     } finally {
@@ -47,11 +49,21 @@ function App() {
     );
   };
 
+  const deleteToDo = (id: number) => {
+    setToDos(prev =>
+      prev?.map(el => (el.id === id ? { ...el, isDeleted: true } : { ...el }))
+    );
+  };
+
   return (
     <div>
       <input type="search" />
       {!isLoading && toDos ? (
-        <ToDosList toDosArr={toDos} toggleIsDone={toggleIsDone} />
+        <ToDosList
+          toDosArr={toDos}
+          toggleIsDone={toggleIsDone}
+          deleteToDo={deleteToDo}
+        />
       ) : (
         <p>Загрузка...</p>
       )}
