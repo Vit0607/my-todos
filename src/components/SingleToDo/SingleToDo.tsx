@@ -1,20 +1,17 @@
 // import { SingleToDoProps } from './SingleToDo.props';
 import styles from './SingleToDo.module.scss';
-import { ToDoFull } from '../../types/toDo';
+import { ToDo } from '../../types/toDo';
 
 const SingleToDo = ({
   el,
   toggle,
   deleteToDo
 }: {
-  el: ToDoFull;
+  el: ToDo;
   toggle: (id: number) => void;
   deleteToDo: (id: number) => void;
 }) => {
-  const { isDeleted } = el;
-  return isDeleted ? (
-    ''
-  ) : (
+  return (
     <li key={el.id} className={styles.toDo}>
       <input
         type="checkbox"
@@ -23,7 +20,7 @@ const SingleToDo = ({
       />
       <span>{el.title}</span>
       <button className={styles.delete} onClick={() => deleteToDo(el.id)}>
-        x
+        Delete
       </button>
     </li>
   );

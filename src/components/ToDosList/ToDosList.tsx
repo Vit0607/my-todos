@@ -1,21 +1,21 @@
-import { ToDoFull } from '../../types/toDo';
+import { ToDo } from '../../types/toDo';
 import SingleToDo from '../SingleToDo/SingleToDo';
 import styles from './ToDosList.module.scss';
 
 const ToDosList = ({
   toDosArr,
   toggleIsDone,
-  deleteToDo
+  onDeleted
 }: {
-  toDosArr: ToDoFull[];
+  toDosArr: ToDo[];
   toggleIsDone: (id: number) => void;
-  deleteToDo: (id: number) => void;
+  onDeleted: (id: number) => void;
 }) => {
   return (
     <ul className={styles.toDoList}>
-      {toDosArr?.map((toDo: ToDoFull) => {
+      {toDosArr?.map((toDo: ToDo) => {
         return (
-          <SingleToDo el={toDo} toggle={toggleIsDone} deleteToDo={deleteToDo} />
+          <SingleToDo el={toDo} toggle={toggleIsDone} deleteToDo={onDeleted} />
         );
       })}
     </ul>

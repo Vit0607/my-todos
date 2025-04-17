@@ -3,7 +3,3 @@ export type ToDo = {
   title: string;
   isDone: boolean;
 };
-
-export type ToDoFull = {
-  isDeleted: boolean;
-} & ToDo;

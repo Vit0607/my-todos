@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import ToDosList from './components/ToDosList/ToDosList';
-import { ToDoFull } from './types/toDo';
+import { ToDo } from './types/toDo';
 
 function App() {
   const initialState = [
@@ -12,10 +12,10 @@ function App() {
 
   type ToDoType = (typeof initialState)[0];
 
-  const [toDos, setToDos] = useState<ToDoFull[]>();
+  const [data, setData] = useState<ToDoType[]>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const delay = (ms: number): Promise<ToDoType[]> => {
+  const delay = (ms: number): Promise<ToDo[]> => {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(initialState);
@@ -26,10 +26,8 @@ function App() {
   const getToDos = async () => {
     setIsLoading(true);
     try {
-      const data = await delay(1000);
-      console.log(typeof data);
-      const newData = data.map(el => ({ ...el, isDeleted: false }));
-      setToDos(newData);
+      const tasks = await delay(1000);
+      setData(tasks);
     } catch (error) {
       console.error(`Ошибка: ${error}`);
     } finally {
@@ -42,27 +40,25 @@ function App() {
   }, []);
 
   const toggleIsDone = (id: number) => {
-    setToDos(prev =>
+    setData(prev =>
       prev?.map(el =>
         el.id === id ? { ...el, isDone: !el.isDone } : { ...el }
       )
     );
   };
 
-  const deleteToDo = (id: number) => {
-    setToDos(prev =>
-      prev?.map(el => (el.id === id ? { ...el, isDeleted: true } : { ...el }))
-    );
+  const handleDeleteItem = (id: number) => {
+    setData(prev => prev?.filter(item => item.id != id));
   };
 
   return (
     <div>
       <input type="search" />
-      {!isLoading && toDos ? (
+      {!isLoading && data ? (
         <ToDosList
-          toDosArr={toDos}
+          toDosArr={data}
           toggleIsDone={toggleIsDone}
-          deleteToDo={deleteToDo}
+          onDeleted={handleDeleteItem}
         />
       ) : (
         <p>Загрузка...</p>
