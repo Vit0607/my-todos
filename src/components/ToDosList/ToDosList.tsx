@@ -15,7 +15,12 @@ const ToDosList = ({
     <ul className={styles.toDoList}>
       {toDosArr?.map((toDo: ToDo) => {
         return (
-          <SingleToDo el={toDo} toggle={toggleIsDone} deleteToDo={onDeleted} />
+          <SingleToDo
+            el={toDo}
+            toggle={toggleIsDone}
+            deleteToDo={onDeleted}
+            key={toDo.id}
+          />
         );
       })}
     </ul>

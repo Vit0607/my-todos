@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ToDosList from './components/ToDosList/ToDosList';
 import { ToDo } from './types/toDo';
+import AddForm from './components/AddForm/AddForm';
 
 function App() {
   const initialState = [
@@ -12,7 +13,7 @@ function App() {
 
   type ToDoType = (typeof initialState)[0];
 
-  const [data, setData] = useState<ToDoType[]>();
+  const [data, setData] = useState<ToDoType[]>(initialState);
   const [isLoading, setIsLoading] = useState(false);
 
   const delay = (ms: number): Promise<ToDo[]> => {
@@ -51,9 +52,23 @@ function App() {
     setData(prev => prev?.filter(item => item.id != id));
   };
 
+  const addItem = (item: object) => {
+    setData(prev => [
+      ...prev,
+      {
+        id: Math.max(...prev.map(i => i.id)) + 1,
+        title: Object.values(item)[0],
+        isDone: false
+      }
+    ]);
+  };
+
   return (
     <div>
-      <input type="search" />
+      <div>
+        <input type="search" placeholder="search todo" />
+        <button>Search</button>
+      </div>
       {!isLoading && data ? (
         <ToDosList
           toDosArr={data}
@@ -63,7 +78,7 @@ function App() {
       ) : (
         <p>Загрузка...</p>
       )}
-      <button>Добавить задачу</button>
+      <AddForm onSubmit={addItem} />
     </div>
   );
 }
