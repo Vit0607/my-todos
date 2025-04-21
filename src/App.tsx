@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ToDosList from './components/ToDosList/ToDosList';
 import { ToDo } from './types/toDo';
-import AddForm from './components/AddForm/AddForm';
+import InputForm from './components/InputForm/InputForm';
 
 function App() {
   const initialState = [
@@ -15,6 +15,7 @@ function App() {
 
   const [data, setData] = useState<ToDoType[]>(initialState);
   const [isLoading, setIsLoading] = useState(false);
+  const [memoryData, setMemoryData] = useState<ToDoType[] | null>();
 
   const delay = (ms: number): Promise<ToDo[]> => {
     return new Promise(resolve => {
@@ -38,7 +39,13 @@ function App() {
 
   useEffect(() => {
     getToDos();
+    setMemoryData([...data]);
   }, []);
+
+  useEffect(() => {
+    console.log('data: ', data);
+    console.log('memoryData: ', memoryData);
+  }, [data, memoryData]);
 
   const toggleIsDone = (id: number) => {
     setData(prev =>
@@ -49,36 +56,56 @@ function App() {
   };
 
   const handleDeleteItem = (id: number) => {
-    setData(prev => prev?.filter(item => item.id != id));
+    setMemoryData(prev => prev?.filter(item => item.id !== id));
+    setData(prev => prev?.filter(item => item.id !== id));
   };
 
   const addItem = (item: object) => {
     setData(prev => [
       ...prev,
       {
-        id: Math.max(...prev.map(i => i.id)) + 1,
+        id: prev.length > 0 ? Math.max(...prev.map(i => i.id)) + 1 : 1,
         title: Object.values(item)[0],
         isDone: false
       }
     ]);
   };
 
+  const searchItem = (item: object) => {
+    setData(prev =>
+      prev?.filter(task => task.title.includes(Object.values(item)[0]))
+    );
+    if (
+      memoryData &&
+      (Object.values(item)[0] === '' || Object.values(item)[0] === null)
+    ) {
+      setData([...memoryData]);
+    }
+  };
+
   return (
     <div>
-      <div>
-        <input type="search" placeholder="search todo" />
-        <button>Search</button>
-      </div>
-      {!isLoading && data ? (
+      <InputForm
+        onSubmit={searchItem}
+        placeholderText="search todo"
+        typeText="search"
+        buttonText="Search"
+      />
+      {isLoading && <p>Загрузка...</p>}
+      {!isLoading && data.length > 0 && (
         <ToDosList
           toDosArr={data}
           toggleIsDone={toggleIsDone}
           onDeleted={handleDeleteItem}
         />
-      ) : (
-        <p>Загрузка...</p>
       )}
-      <AddForm onSubmit={addItem} />
+      {!isLoading && data.length === 0 && <p>Ничего не найдено!</p>}
+      <InputForm
+        onSubmit={addItem}
+        placeholderText="add todo"
+        typeText="text"
+        buttonText="Add"
+      />
     </div>
   );
 }
