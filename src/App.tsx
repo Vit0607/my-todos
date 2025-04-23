@@ -9,7 +9,7 @@ import styles from './App.module.scss';
 function App() {
   const [data, setData] = useState<ToDo[]>();
   const [isLoading, setIsLoading] = useState(false);
-  const [memoryData, setMemoryData] = useState<ToDo[] | null>();
+  const [memoryData, setMemoryData] = useState<ToDo[]>();
 
   const getToDos = async () => {
     setIsLoading(true);
@@ -28,6 +28,11 @@ function App() {
     getToDos();
   }, []);
 
+  useEffect(() => {
+    console.log('data: ', data);
+    console.log('memoryData: ', memoryData);
+  }, [data, memoryData]);
+
   const toggleIsDone = (id: number) => {
     setData(prev =>
       prev?.map(el =>
@@ -43,6 +48,18 @@ function App() {
 
   const addItem = (item: object) => {
     setData(prev =>
+      prev !== undefined
+        ? [
+            ...prev,
+            {
+              id: prev?.length > 0 ? Math.max(...prev.map(i => i.id)) + 1 : 1,
+              title: Object.values(item)[0],
+              isDone: false
+            }
+          ]
+        : []
+    );
+    setMemoryData(prev =>
       prev !== undefined
         ? [
             ...prev,
