@@ -11,6 +11,7 @@ const SingleToDo = ({
   toggle: (id: number) => void;
   deleteToDo: (id: number) => void;
 }) => {
+  console.log(`TODO_${el.id}`);
   return (
     <li key={el.id} className={styles.toDo}>
       <input
