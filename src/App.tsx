@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ToDo } from './types/toDo';
 import InputForm from './components/InputForm/InputForm';
 import { delay } from './utils/delay';
 import { initialState } from './constants/initialState';
 import SingleToDo from './components/SingleToDo/SingleToDo';
 import styles from './App.module.scss';
+import { handleInput } from './utils/handleInput';
+import { addItem } from './utils/addItem';
 
 function App() {
-  const [data, setData] = useState<ToDo[]>();
+  const [data, setData] = useState<ToDo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [memoryData, setMemoryData] = useState<ToDo[]>();
+  const [memoryData, setMemoryData] = useState<ToDo[]>([]);
+  const [addValue, setAddValue] = useState<string>('');
+  const addRef = useRef<HTMLInputElement>(null);
 
   const getToDos = async () => {
     setIsLoading(true);
@@ -44,33 +48,6 @@ function App() {
   const handleDeleteItem = (id: number) => {
     setMemoryData(prev => prev?.filter(item => item.id !== id));
     setData(prev => prev?.filter(item => item.id !== id));
-  };
-
-  const addItem = (item: object) => {
-    setData(prev =>
-      prev !== undefined
-        ? [
-            ...prev,
-            {
-              id: prev?.length > 0 ? Math.max(...prev.map(i => i.id)) + 1 : 1,
-              title: Object.values(item)[0],
-              isDone: false
-            }
-          ]
-        : []
-    );
-    setMemoryData(prev =>
-      prev !== undefined
-        ? [
-            ...prev,
-            {
-              id: prev?.length > 0 ? Math.max(...prev.map(i => i.id)) + 1 : 1,
-              title: Object.values(item)[0],
-              isDone: false
-            }
-          ]
-        : []
-    );
   };
 
   const searchItem = (item: object) => {
@@ -109,12 +86,22 @@ function App() {
         </ul>
       )}
       {!isLoading && data && data.length === 0 && <p>Ничего не найдено!</p>}
-      <InputForm
+      {/* <InputForm
         onSubmit={addItem}
         placeholderText="add todo"
         typeText="text"
         buttonText="Add"
+      /> */}
+      <input
+        type="text"
+        placeholder="add todo"
+        value={addValue}
+        ref={addRef}
+        onChange={handleInput(setAddValue)}
       />
+      <button onClick={() => addItem(setData, setMemoryData, addRef)}>
+        Add
+      </button>
     </div>
   );
 }
