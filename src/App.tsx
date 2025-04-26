@@ -7,6 +7,7 @@ import SingleToDo from './components/SingleToDo/SingleToDo';
 import styles from './App.module.scss';
 import { handleInput } from './utils/handleInput';
 import { addItem } from './utils/addItem';
+import Input from './components/Input/Input';
 
 function App() {
   const [data, setData] = useState<ToDo[]>([]);
@@ -86,22 +87,18 @@ function App() {
         </ul>
       )}
       {!isLoading && data && data.length === 0 && <p>Ничего не найдено!</p>}
-      {/* <InputForm
-        onSubmit={addItem}
-        placeholderText="add todo"
-        typeText="text"
-        buttonText="Add"
-      /> */}
-      <input
-        type="text"
-        placeholder="add todo"
-        value={addValue}
-        ref={addRef}
-        onChange={handleInput(setAddValue)}
-      />
-      <button onClick={() => addItem(setData, setMemoryData, addRef)}>
-        Add
-      </button>
+      <div className={styles.addItemBlock}>
+        <Input
+          type="text"
+          placeholder="add todo"
+          value={addValue}
+          func={handleInput(setAddValue)}
+          ref={addRef}
+        />
+        <button onClick={() => addItem(setData, setMemoryData, addRef)}>
+          Add
+        </button>
+      </div>
     </div>
   );
 }
