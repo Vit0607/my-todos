@@ -8,6 +8,7 @@ import styles from './App.module.scss';
 import { handleInput } from './utils/handleInput';
 import { addItem } from './utils/addItem';
 import Input from './components/Input/Input';
+import { useDebounce } from './hooks/useDebounce.hook';
 
 function App() {
   const [data, setData] = useState<ToDo[]>([]);
@@ -95,7 +96,12 @@ function App() {
           func={handleInput(setAddValue)}
           ref={addRef}
         />
-        <button onClick={() => addItem(setData, setMemoryData, addRef)}>
+        <button
+          onClick={useDebounce(
+            () => addItem(setData, setMemoryData, addRef),
+            2000
+          )}
+        >
           Add
         </button>
       </div>
