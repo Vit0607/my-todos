@@ -1,30 +1,43 @@
 // import { SingleToDoProps } from './SingleToDo.props';
 import styles from './SingleToDo.module.scss';
-import { ToDo } from '../../types/toDo';
+import { memo, useEffect } from 'react';
+
+interface SingleToDoProps {
+  id: number;
+  title: string;
+  isDone: boolean;
+  toggleIsDone: (checked: boolean, index: number) => void;
+  index: number;
+  handleDeleteItem: (id: number) => void;
+}
 
 const SingleToDo = ({
-  el,
-  toggle,
-  deleteToDo
-}: {
-  el: ToDo;
-  toggle: (id: number) => void;
-  deleteToDo: (id: number) => void;
-}) => {
-  console.log(`TODO_${el.id}`);
+  id,
+  title,
+  isDone,
+  toggleIsDone,
+  index,
+  handleDeleteItem
+}: SingleToDoProps) => {
+  console.log(`TODO_${id}`);
+
+  useEffect(() => {
+    console.log('checked: ', isDone);
+  }, [isDone]);
+
   return (
-    <li key={el.id} className={styles.toDo}>
+    <li className={styles.toDo}>
       <input
         type="checkbox"
-        checked={el.isDone}
-        onChange={() => toggle(el.id)}
+        checked={isDone}
+        onChange={e => toggleIsDone(e.target.checked, index)}
       />
-      <span>{el.title}</span>
-      <button className={styles.delete} onClick={() => deleteToDo(el.id)}>
+      <span>{title}</span>
+      <button className={styles.delete} onClick={() => handleDeleteItem(id)}>
         Delete
       </button>
     </li>
   );
 };
 
-export default SingleToDo;
+export default memo(SingleToDo);

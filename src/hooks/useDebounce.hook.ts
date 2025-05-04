@@ -1,14 +1,14 @@
-import { useRef } from 'react';
-
-export function useDebounce(callback: Function, delay: number) {
-  const timerId = useRef<number | null>(null);
-
-  return (...args: any[]) => {
-    if (timerId.current) {
-      clearTimeout(timerId.current);
-    }
-    timerId.current = setTimeout(() => {
-      callback(...args);
+export const useDebounce = (
+  setter: React.Dispatch<React.SetStateAction<string>>,
+  delay = 2000
+) => {
+  const debouncedSetter = (value: string) => {
+    const timer = setTimeout(() => {
+      setter(value);
     }, delay);
+
+    return () => clearTimeout(timer);
   };
-}
+
+  return debouncedSetter;
+};

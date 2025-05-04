@@ -1,4 +1,4 @@
-export const initialState = [
+export const DEFAULT_TODO_LIST = [
   { id: 1, title: 'todo_1', isDone: false },
   { id: 2, title: 'todo_2', isDone: false },
   { id: 3, title: 'todo_3', isDone: true },

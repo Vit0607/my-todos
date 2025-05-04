@@ -7,13 +7,13 @@ const Input = forwardRef(function input(
   {
     type,
     placeholder,
-    value,
+    // value,
     func,
     ...props
   }: {
     type: string;
     placeholder: string;
-    value: string;
+    // value: string;
     func: (e: InputEvent) => void;
   },
   ref: RefType
@@ -23,7 +23,7 @@ const Input = forwardRef(function input(
       {...props}
       type={type}
       placeholder={placeholder}
-      value={value}
+      // value={value}
       onChange={func}
       ref={ref}
     />
