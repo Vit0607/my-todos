@@ -1,9 +1,7 @@
-import { ToDo } from '../types/toDo';
-
-export const delay = (arr: ToDo[], ms: number): Promise<ToDo[]> => {
+export const delay = <T>(value: T, ms: number): Promise<T> => {
   return new Promise(resolve => {
     setTimeout(() => {
-      resolve(arr);
+      resolve(value);
     }, ms);
   });
 };

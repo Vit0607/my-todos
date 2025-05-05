@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { ToDo } from './types/toDo';
 import { delay } from './utils/delay';
 import { DEFAULT_TODO_LIST } from './constants/defaultTodoList';
@@ -10,15 +10,16 @@ import { useDebounce } from './hooks/useDebounce.hook';
 function App() {
   const [data, setData] = useState<ToDo[]>([]);
   const [search, setSearch] = useState('');
-  const debouncedSearch = useDebounce(setSearch);
+  // const debouncedSearch = useDebounce(setSearch);
+  const debouncedSearch = useDebounce(search);
   const [isLoading, setIsLoading] = useState(false);
   const [memoryData, setMemoryData] = useState<ToDo[]>([]);
   const [newToDo, setNewToDo] = useState<string>('');
   const debouncedNewToDo = useDebounce(setNewToDo);
 
-  console.log('Parent (App) rerender');
+  const isMounted = useRef(false);
 
-  // const addRef = useRef<HTMLInputElement>(null);
+  console.log('Parent (App) rerender');
 
   const getToDos = async () => {
     setIsLoading(true);
@@ -34,22 +35,34 @@ function App() {
   };
 
   useEffect(() => {
-    getToDos();
-  }, []);
-
-  const searchItem = (substr: string) => {
-    setData(prev => prev?.filter(task => task.title.includes(substr)));
-
-    if (memoryData && (substr === '' || substr === null)) {
-      setData([...memoryData]);
+    if (!isMounted.current) {
+      console.log('isMounted сработал 2');
+      isMounted.current = true;
+      return;
     }
-  };
 
-  useEffect(() => {
-    searchItem(search);
+    const searchData = async () => {
+      setIsLoading(true);
+
+      const substr = await delay(debouncedSearch, 1000);
+      setData(prev => prev?.filter(task => task.title.includes(substr)));
+
+      if (memoryData && (substr === '' || substr === null)) {
+        setData([...memoryData]);
+      }
+
+      setIsLoading(false);
+      console.log('ПОИСК СРАБОТАЛ');
+    };
+
+    searchData();
     console.log('data: ', data);
     console.log('memoryData: ', memoryData);
-  }, [search]);
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    getToDos();
+  }, []);
 
   useEffect(() => {
     console.log('dataChanged: ', data);
@@ -81,7 +94,7 @@ function App() {
       <input
         type="search"
         placeholder="search todo"
-        onChange={e => debouncedSearch(e.target.value)}
+        onChange={e => setSearch(e.target.value)}
       />
       {isLoading && <p>Загрузка...</p>}
       {!isLoading && data && data.length > 0 && (
@@ -101,7 +114,9 @@ function App() {
           })}
         </ul>
       )}
-      {!isLoading && data && data.length === 0 && <p>Ничего не найдено!</p>}
+      {!isLoading && data && memoryData.length !== 0 && data.length === 0 && (
+        <p>Ничего не найдено!</p>
+      )}
       <div className={styles.addItemBlock}>
         <input
           type="text"

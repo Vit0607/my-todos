@@ -1,14 +1,15 @@
-export const useDebounce = (
-  setter: React.Dispatch<React.SetStateAction<string>>,
-  delay = 2000
-) => {
-  const debouncedSetter = (value: string) => {
-    const timer = setTimeout(() => {
-      setter(value);
+import { useState, useEffect } from 'react';
+
+export const useDebounce = <T>(value: T, delay = 500) => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedValue(value);
     }, delay);
 
-    return () => clearTimeout(timer);
-  };
+    return () => clearTimeout(timeout);
+  }, [value, delay]);
 
-  return debouncedSetter;
+  return debouncedValue;
 };
