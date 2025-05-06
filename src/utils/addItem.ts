@@ -1,13 +1,11 @@
-import { ToDo } from '../types/toDo';
-
-type Callback = (updater: (prev: ToDo[]) => ToDo[]) => void;
+import { Todo, TodosUpdater } from '../types/todo';
 
 export const addItem = (
-  cbData: Callback,
-  cbMemoryData: Callback,
+  cbData: TodosUpdater,
+  cbMemoryData: TodosUpdater,
   value: string
 ) => {
-  const createNewItem = (prev: ToDo[]) => {
+  const createNewItem = (prev: Todo[]) => {
     return [
       ...prev,
       {

@@ -1,21 +1,21 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { ToDo } from './types/toDo';
+import { Todo } from './types/todo';
 import { delay } from './utils/delay';
-import { DEFAULT_TODO_LIST } from './constants/defaultTodoList';
+import { DEFAULT_TODO_LIST } from './mocks/defaultTodoList';
 import SingleToDo from './components/SingleToDo/SingleToDo';
 import styles from './App.module.scss';
-import { addItem } from './utils/addItem';
 import { useDebounce } from './hooks/useDebounce.hook';
+import SearchBar from './components/SearchBar/SearchBar';
+import AddTask from './components/AddTask/AddTask';
 
 function App() {
-  const [data, setData] = useState<ToDo[]>([]);
+  const [data, setData] = useState<Todo[]>([]);
   const [search, setSearch] = useState('');
-  // const debouncedSearch = useDebounce(setSearch);
   const debouncedSearch = useDebounce(search);
   const [isLoading, setIsLoading] = useState(false);
-  const [memoryData, setMemoryData] = useState<ToDo[]>([]);
-  const [newToDo, setNewToDo] = useState<string>('');
-  const debouncedNewToDo = useDebounce(setNewToDo);
+  const [memoryData, setMemoryData] = useState<Todo[]>([]);
+  const [newTask, setNewTask] = useState<string>('');
+  const debouncedNewTask = useDebounce(newTask);
 
   const isMounted = useRef(false);
 
@@ -36,7 +36,6 @@ function App() {
 
   useEffect(() => {
     if (!isMounted.current) {
-      console.log('isMounted сработал 2');
       isMounted.current = true;
       return;
     }
@@ -91,15 +90,11 @@ function App() {
 
   return (
     <div>
-      <input
-        type="search"
-        placeholder="search todo"
-        onChange={e => setSearch(e.target.value)}
-      />
+      <SearchBar onChange={setSearch} />
       {isLoading && <p>Загрузка...</p>}
       {!isLoading && data && data.length > 0 && (
         <ul className={styles.toDoList}>
-          {data?.map((toDo: ToDo, index: number) => {
+          {data?.map((toDo: Todo, index: number) => {
             return (
               <SingleToDo
                 id={toDo.id}
@@ -117,16 +112,24 @@ function App() {
       {!isLoading && data && memoryData.length !== 0 && data.length === 0 && (
         <p>Ничего не найдено!</p>
       )}
-      <div className={styles.addItemBlock}>
+      {/* <div className={styles.addItemBlock}>
         <input
           type="text"
           placeholder="add todo"
-          onChange={e => debouncedNewToDo(e.target.value)}
+          onChange={e => setNewTask(e.target.value)}
         />
-        <button onClick={() => addItem(setData, setMemoryData, newToDo)}>
+        <button
+          onClick={() => addItem(setData, setMemoryData, debouncedNewTask)}
+        >
           Add
         </button>
-      </div>
+      </div> */}
+      <AddTask
+        onChange={setNewTask}
+        setData={setData}
+        setMemoryData={setMemoryData}
+        debouncedNewTask={debouncedNewTask}
+      />
     </div>
   );
 }
