@@ -3,12 +3,7 @@
   align-items: center;
   gap: 0.5rem;
 
-  .delete {
-    &:hover {
-      background-color: red;
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+  .titleDisabled {
+    opacity: 0.5;
   }
 }

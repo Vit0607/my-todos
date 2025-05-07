@@ -5,6 +5,7 @@ interface AddTaskProps {
   onChange: (value: string) => void;
   setData: TodosUpdater;
   setMemoryData: TodosUpdater;
+  setIsAddLoading: (value: boolean) => void;
   debouncedNewTask: string;
 }
 
@@ -12,6 +13,7 @@ const AddTask = ({
   onChange,
   setData,
   setMemoryData,
+  setIsAddLoading,
   debouncedNewTask
 }: AddTaskProps) => {
   return (
@@ -21,7 +23,11 @@ const AddTask = ({
         placeholder="Add todo"
         onChange={e => onChange(e.target.value)}
       />
-      <button onClick={() => addItem(setData, setMemoryData, debouncedNewTask)}>
+      <button
+        onClick={() =>
+          addItem(setData, setMemoryData, setIsAddLoading, debouncedNewTask)
+        }
+      >
         Add
       </button>
     </div>

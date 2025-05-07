@@ -16,8 +16,9 @@ function App() {
   const [memoryData, setMemoryData] = useState<Todo[]>([]);
   const [newTask, setNewTask] = useState<string>('');
   const debouncedNewTask = useDebounce(newTask);
+  const [isAddLoading, setIsAddLoading] = useState(false);
 
-  const isMounted = useRef(false);
+  const isMountedSearch = useRef(false);
 
   console.log('Parent (App) rerender');
 
@@ -35,8 +36,8 @@ function App() {
   };
 
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
+    if (!isMountedSearch.current) {
+      isMountedSearch.current = true;
       return;
     }
 
@@ -63,12 +64,7 @@ function App() {
     getToDos();
   }, []);
 
-  useEffect(() => {
-    console.log('dataChanged: ', data);
-  }, [data]);
-
   const handleChange = (checked: boolean, index: number) => {
-    console.log('isChecked: ', checked);
     setData(prev => {
       prev[index].isDone = checked;
       return [...prev];
@@ -104,30 +100,25 @@ function App() {
                 toggleIsDone={listenChange}
                 handleDeleteItem={listenDelete}
                 key={toDo.id}
+                addLoading={isAddLoading}
               />
             );
           })}
         </ul>
       )}
+      {isAddLoading && (
+        <ul className={styles.isAddLoading}>
+          <li>Загрузка новой задачи...</li>
+        </ul>
+      )}
       {!isLoading && data && memoryData.length !== 0 && data.length === 0 && (
         <p>Ничего не найдено!</p>
       )}
-      {/* <div className={styles.addItemBlock}>
-        <input
-          type="text"
-          placeholder="add todo"
-          onChange={e => setNewTask(e.target.value)}
-        />
-        <button
-          onClick={() => addItem(setData, setMemoryData, debouncedNewTask)}
-        >
-          Add
-        </button>
-      </div> */}
       <AddTask
         onChange={setNewTask}
         setData={setData}
         setMemoryData={setMemoryData}
+        setIsAddLoading={setIsAddLoading}
         debouncedNewTask={debouncedNewTask}
       />
     </div>

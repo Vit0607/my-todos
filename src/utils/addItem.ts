@@ -1,10 +1,18 @@
 import { Todo, TodosUpdater } from '../types/todo';
+import { delay } from '../utils/delay';
 
-export const addItem = (
+export const addItem = async (
   cbData: TodosUpdater,
   cbMemoryData: TodosUpdater,
+  cbIsAddLoading: (value: boolean) => void,
   value: string
 ) => {
+  const handleIsAddLoading = (value: boolean) => {
+    cbIsAddLoading(value);
+  };
+  handleIsAddLoading(true);
+  console.log('Загрузка newItem началась...');
+
   const createNewItem = (prev: Todo[]) => {
     return [
       ...prev,
@@ -15,6 +23,11 @@ export const addItem = (
       }
     ];
   };
-  cbData(createNewItem);
-  cbMemoryData(createNewItem);
+  const newItem = await delay(createNewItem, 1000);
+
+  cbData(newItem);
+  cbMemoryData(newItem);
+
+  handleIsAddLoading(false);
+  console.log('Загрузка newItem закончилась!');
 };

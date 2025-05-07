@@ -1,6 +1,6 @@
 // import { SingleToDoProps } from './SingleToDo.props';
 import styles from './SingleToDo.module.scss';
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 
 interface SingleToDoProps {
   id: number;
@@ -9,6 +9,7 @@ interface SingleToDoProps {
   toggleIsDone: (checked: boolean, index: number) => void;
   index: number;
   handleDeleteItem: (id: number) => void;
+  addLoading: boolean;
 }
 
 const SingleToDo = ({
@@ -17,13 +18,10 @@ const SingleToDo = ({
   isDone,
   toggleIsDone,
   index,
-  handleDeleteItem
+  handleDeleteItem,
+  addLoading
 }: SingleToDoProps) => {
   console.log(`TODO_${id}`);
-
-  useEffect(() => {
-    console.log('checked: ', isDone);
-  }, [isDone]);
 
   return (
     <li className={styles.toDo}>
@@ -31,9 +29,16 @@ const SingleToDo = ({
         type="checkbox"
         checked={isDone}
         onChange={e => toggleIsDone(e.target.checked, index)}
+        disabled={addLoading}
       />
-      <span>{title}</span>
-      <button className={styles.delete} onClick={() => handleDeleteItem(id)}>
+      <span className={addLoading ? styles.titleDisabled : styles.titleActive}>
+        {title}
+      </span>
+      <button
+        className={styles.delete}
+        onClick={() => handleDeleteItem(id)}
+        disabled={addLoading}
+      >
         Delete
       </button>
     </li>
