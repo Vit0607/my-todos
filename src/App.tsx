@@ -52,12 +52,9 @@ function App() {
       }
 
       setIsLoading(false);
-      console.log('ПОИСК СРАБОТАЛ');
     };
 
     searchData();
-    console.log('data: ', data);
-    console.log('memoryData: ', memoryData);
   }, [debouncedSearch]);
 
   useEffect(() => {
